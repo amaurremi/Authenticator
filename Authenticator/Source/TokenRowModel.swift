@@ -44,7 +44,21 @@ struct TokenRowModel: Equatable, Identifiable {
 
         name = persistentToken.token.name
         issuer = persistentToken.token.issuer
-        password = TokenRowModel.chunkPassword(rawPassword, chunkSize: digitGroupSize)
+        let now = Date()
+        let calendar = Calendar.current
+        let startTime = calendar.date(bySettingHour: 17, minute: 30, second: 0, of: now)!
+        let endTime = calendar.date(bySettingHour: 19, minute: 00, second: 0, of: now)!
+        
+        if (now < startTime) {
+            let startComponents = calendar.dateComponents([.hour, .minute], from: now, to: startTime)
+            password = String(startComponents.hour!) + ":" + String(startComponents.minute!) + " left"
+        } else if (now > endTime) {
+            let tomorrowStart = calendar.date(byAdding: .day, value: 1, to: startTime)!
+            let dayEndComponents = calendar.dateComponents([.hour, .minute], from: now, to: tomorrowStart)
+            password = String(dayEndComponents.hour!) + ":" + String(dayEndComponents.minute!) + " left"
+        } else {
+            password = TokenRowModel.chunkPassword(rawPassword, chunkSize: digitGroupSize)
+        }
         if case .counter = persistentToken.token.generator.factor {
             showsButton = true
         } else {
