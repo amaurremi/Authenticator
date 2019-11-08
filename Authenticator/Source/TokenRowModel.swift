@@ -52,12 +52,15 @@ struct TokenRowModel: Equatable, Identifiable {
         if (now < startTime) {
             let startComponents = calendar.dateComponents([.hour, .minute], from: now, to: startTime)
             password = String(startComponents.hour!) + ":" + String(startComponents.minute!) + " left"
+            selectAction = .noAction
         } else if (now > endTime) {
             let tomorrowStart = calendar.date(byAdding: .day, value: 1, to: startTime)!
             let dayEndComponents = calendar.dateComponents([.hour, .minute], from: now, to: tomorrowStart)
             password = String(dayEndComponents.hour!) + ":" + String(dayEndComponents.minute!) + " left"
+            selectAction = .noAction
         } else {
             password = TokenRowModel.chunkPassword(rawPassword, chunkSize: digitGroupSize)
+            selectAction = .copyPassword(rawPassword)
         }
         if case .counter = persistentToken.token.generator.factor {
             showsButton = true
@@ -65,7 +68,6 @@ struct TokenRowModel: Equatable, Identifiable {
             showsButton = false
         }
         buttonAction = .updatePersistentToken(persistentToken)
-        selectAction = .copyPassword(rawPassword)
         editAction = .editPersistentToken(persistentToken)
         deleteAction = .deletePersistentToken(persistentToken)
         identifier = persistentToken.identifier

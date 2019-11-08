@@ -90,6 +90,7 @@ extension TokenList {
 
         case showBackupInfo
         case showInfo
+        case noAction
     }
 
     enum Effect {
@@ -139,6 +140,9 @@ extension TokenList {
 
         case .showInfo:
             return .showInfo
+            
+        case .noAction:
+            return nil
         }
     }
 
