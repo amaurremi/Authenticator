@@ -99,6 +99,7 @@ private extension PersistentToken {
         token = demoToken
         // swiftlint:disable:next force_unwrapping
         identifier = UUID().uuidString.data(using: String.Encoding.utf8)!
+        creationTime = Date()
     }
 }
 

@@ -51,15 +51,18 @@ struct TokenRowModel: Equatable, Identifiable {
         let startTime2 = calendar.date(bySettingHour: 17, minute: 30, second: 0, of: now)!
         let endTime2 = calendar.date(bySettingHour: 19, minute: 00, second: 0, of: now)!
         
-        if (now < startTime1) {
+        let timeAllowedToSetUpToken = calendar.date(byAdding: .minute, value: 1, to: persistentToken.creationTime)!
+        let allowedTimePassed = timeAllowedToSetUpToken < now
+        
+        if (now < startTime1 && allowedTimePassed) {
             let startComponents = calendar.dateComponents([.hour, .minute], from: now, to: startTime1)
             password = String(startComponents.hour!) + ":" + String(startComponents.minute!) + " left"
             selectAction = .noAction
-        } else if (now > endTime1 && now < startTime2) {
+        } else if (now > endTime1 && now < startTime2 && allowedTimePassed) {
             let dayEndComponents = calendar.dateComponents([.hour, .minute], from: now, to: startTime2)
             password = String(dayEndComponents.hour!) + ":" + String(dayEndComponents.minute!) + " left"
             selectAction = .noAction
-        } else if (now > endTime2) {
+        } else if (now > endTime2 && allowedTimePassed) {
             let tomorrowStart = calendar.date(byAdding: .day, value: 1, to: startTime1)!
             let dayEndComponents = calendar.dateComponents([.hour, .minute], from: now, to: tomorrowStart)
             password = String(dayEndComponents.hour!) + ":" + String(dayEndComponents.minute!) + " left"
